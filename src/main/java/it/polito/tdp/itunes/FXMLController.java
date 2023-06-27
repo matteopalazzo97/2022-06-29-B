@@ -6,6 +6,9 @@ package it.polito.tdp.itunes;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import it.polito.tdp.itunes.model.Album;
+import it.polito.tdp.itunes.model.AlbumBilanci;
 import it.polito.tdp.itunes.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -34,10 +37,10 @@ public class FXMLController {
     private Button btnPercorso; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbA1"
-    private ComboBox<?> cmbA1; // Value injected by FXMLLoader
+    private ComboBox<Album> cmbA1; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbA2"
-    private ComboBox<?> cmbA2; // Value injected by FXMLLoader
+    private ComboBox<Album> cmbA2; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtN"
     private TextField txtN; // Value injected by FXMLLoader
@@ -51,6 +54,18 @@ public class FXMLController {
     @FXML
     void doCalcolaAdiacenze(ActionEvent event) {
     	
+    	this.txtResult.clear();
+
+    	if(this.cmbA1.getValue() == null) {
+    		this.txtResult.setText("Seleziona un valore dalla tendina.");
+    	} else {
+
+    		for(AlbumBilanci a: this.model.adiacenze(this.cmbA1.getValue())) {
+    			this.txtResult.appendText(a.toString() + "\n");
+    		}
+
+    	}
+    	
     }
 
     @FXML
@@ -60,6 +75,30 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
+    	
+    	this.cmbA1.getItems().clear();
+
+    	if(this.txtN.getText().equals("")) {
+    		this.txtResult.setText("Inserire un valore per n.");
+    		return;
+    	}
+
+    	try {
+
+    		this.model.creaGrafo(Integer.parseInt(this.txtN.getText()));
+
+    		this.txtResult.setText("Grafo creato.\n");
+    		this.txtResult.appendText("# vertici: " + this.model.getNumVertici() + "\n");
+    		this.txtResult.appendText("# archi:   " + this.model.getNumArchi() + "\n");
+
+    		this.cmbA1.getItems().addAll(this.model.getVertici());
+
+
+
+    	}catch(NumberFormatException e) {
+    		this.txtResult.setText("Inserire un valore numerico per n.");
+    		return;
+    	}
     	
     }
 

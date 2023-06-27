@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import it.polito.tdp.itunes.model.Album;
+import it.polito.tdp.itunes.model.AlbumDurata;
 import it.polito.tdp.itunes.model.Artist;
 import it.polito.tdp.itunes.model.Genre;
 import it.polito.tdp.itunes.model.MediaType;
@@ -139,6 +140,55 @@ public class ItunesDAO {
 		return result;
 	}
 	
+	public List<Album> getVertici(int n){
+		final String sql = "SELECT DISTINCT a.* "
+				+ "FROM album a, track t "
+				+ "WHERE a.`AlbumId`=t.`AlbumId` "
+				+ "GROUP BY a.`AlbumId` "
+				+ "HAVING sum(t.`Milliseconds`)/1000>?";
+		List<Album> result = new LinkedList<>();
+		
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, n);
+			ResultSet res = st.executeQuery();
+
+			while (res.next()) {
+				result.add(new Album(res.getInt("AlbumId"), res.getString("Title")));
+			}
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException("SQL Error");
+		}
+		return result;
+	}
 	
+	public List<AlbumDurata> getVerticiDurata(int n){
+		final String sql = "SELECT DISTINCT a.*, sum(t.`Milliseconds`)/1000 AS durata "
+				+ "FROM album a, track t "
+				+ "WHERE a.`AlbumId`=t.`AlbumId` "
+				+ "GROUP BY a.`AlbumId` "
+				+ "HAVING sum(t.`Milliseconds`)/1000>?";
+		List<AlbumDurata> result = new LinkedList<>();
+		
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, n);
+			ResultSet res = st.executeQuery();
+
+			while (res.next()) {
+				result.add(new AlbumDurata(new Album(res.getInt("AlbumId"), res.getString("Title")),
+						res.getDouble("durata")));
+			}
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException("SQL Error");
+		}
+		return result;
+	}
 	
 }

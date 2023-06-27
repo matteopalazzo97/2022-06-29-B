@@ -1,5 +1,8 @@
 package it.polito.tdp.itunes.db;
 
+import java.util.List;
+import java.util.LinkedList;
+
 public class TestItunesDAO {
 
 	public static void main(String[] args) {
@@ -10,8 +13,16 @@ public class TestItunesDAO {
 		System.out.println(dao.getAllTracks().size());
 		System.out.println(dao.getAllGenres().size());
 		System.out.println(dao.getAllMediaTypes().size());*/
-
-
+		
+		
+		List<Integer> lista = new LinkedList();
+		
+		for(int i=0; i<=5; i++) {
+			lista.add(i);
+		}
+		for(int i=0; i<=5; i++) {
+			System.out.println(i);
+		}
 	}
 
 }
